@@ -3,6 +3,10 @@ package ru.redenergy.skypebot.commands;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -10,7 +14,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -54,11 +57,17 @@ public class CommandOnline implements ICommand {
 		}
 		
 		if("top".equals(args[0])){
-			JsonObject records = jelement.get("online").getAsJsonObject();
-			StringBuffer buffer = new StringBuffer();
-			buffer.append("Top online for today - " + records.get("recordToday").toString() + "\n");
-			buffer.append("Top online for all time - " + records.get("recordForAll").toString() + "\n");
-			sender.getChat().sendMessage(Message.fromHtml(buffer.toString()));
+			List<JsonObject> listOfServers = new ArrayList<JsonObject>();
+			servers.forEach(server -> listOfServers.add(server.getAsJsonObject()));
+			
+			Collections.sort(listOfServers, new Comparator<JsonObject>() {
+				@Override
+				public int compare(JsonObject o1, JsonObject o2) {
+					return -((Integer)o1.get("min").getAsInt()).compareTo(((Integer)o2.get("min").getAsInt()));
+				}
+			});
+			if(!listOfServers.isEmpty())
+				sender.getChat().sendMessage(Message.fromHtml("Top server - " + listOfServers.get(0).get("name").toString().replaceAll("\\<[^>]*>","").replaceAll("\\[.*?\\]","").replaceAll("\"", "") + " with online " + listOfServers.get(0).get("min").getAsInt()));
 			return;
 		}
 	}

@@ -12,7 +12,7 @@ public class Main {
 	private static SkypeBot bot;
 	
 	public static void main(String[] args){
-		bot = new SkypeBot("poison1x", "918273645Danil");
+		bot = new SkypeBot("***", "***");
 		bot.registerCommand(new CommandHelp());
 		bot.registerCommand(new CommandOnline());
 		try {

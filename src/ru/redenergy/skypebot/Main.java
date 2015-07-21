@@ -6,6 +6,7 @@ import com.samczsun.skype4j.exceptions.SkypeException;
 
 import ru.redenergy.skypebot.commands.CommandHelp;
 import ru.redenergy.skypebot.commands.CommandOnline;
+import ru.redenergy.skypebot.commands.CommandSpin;
 
 public class Main {
 	
@@ -15,6 +16,7 @@ public class Main {
 		bot = new SkypeBot(args[0], args[1]);
 		bot.registerCommand(new CommandHelp());
 		bot.registerCommand(new CommandOnline());
+		bot.registerCommand(new CommandSpin());
 		try {
 			bot.start();
 		} catch (IOException | SkypeException e) {

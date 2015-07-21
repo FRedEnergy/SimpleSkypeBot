@@ -28,7 +28,8 @@ public class CommandSpin implements ICommand {
 			spinnedSmiles[2] = getRandomSmile();
 			String value = String.format("You got: \n %s - %s - %s \n", spinnedSmiles[0], spinnedSmiles[1], spinnedSmiles[2]);
 			String result = "";
-			if(Arrays.stream(spinnedSmiles).allMatch(s -> s.equals(spinnedSmiles[0]))){
+			boolean won = Arrays.stream(spinnedSmiles).allMatch(s -> s.equals(spinnedSmiles[0]));
+			if(won){
 				result = "...and you won! (party)";
 			} else {
 				result = "...and you've lost!";
@@ -36,7 +37,7 @@ public class CommandSpin implements ICommand {
 			spinTime.put(sender.getUsername(), System.currentTimeMillis() / 1000L);
 			sender.getChat().sendMessage(Message.fromHtml(value + result));
 		} else {
-			sender.getChat().sendMessage(Message.fromHtml("You need to way a bit..."));
+			sender.getChat().sendMessage(Message.fromHtml("You need to wait a bit..."));
 		}
 	}
 	

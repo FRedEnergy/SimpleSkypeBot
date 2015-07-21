@@ -14,9 +14,11 @@ public class Main {
 	
 	public static void main(String[] args){
 		bot = new SkypeBot(args[0], args[1]);
+		
 		bot.registerCommand(new CommandHelp());
 		bot.registerCommand(new CommandOnline());
 		bot.registerCommand(new CommandSpin());
+		
 		try {
 			bot.start();
 		} catch (IOException | SkypeException e) {

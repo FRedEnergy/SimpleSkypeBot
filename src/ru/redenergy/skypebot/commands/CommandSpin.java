@@ -40,7 +40,7 @@ public class CommandSpin implements ICommand {
 			spinTime.put(sender.getUsername(), System.currentTimeMillis() / 1000L);
 			sender.getChat().sendMessage(Message.fromHtml(value + result));
 		} else {
-			sender.getChat().sendMessage(Message.fromHtml(String.format("%s need to wait %d seconds", sender.getUsername(),  (System.currentTimeMillis() / 1000L - spinTime.get(sender.getUsername())))));
+			sender.getChat().sendMessage(Message.fromHtml(String.format("%s need to wait %d seconds", sender.getUsername(),  System.currentTimeMillis() / 1000L - spinTime.get(sender.getUsername()) )));
 		}
 	}
 	

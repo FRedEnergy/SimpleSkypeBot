@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.samczsun.skype4j.exceptions.SkypeException;
 
 import ru.redenergy.skypebot.commands.CommandHelp;
+import ru.redenergy.skypebot.commands.CommandMusic;
 import ru.redenergy.skypebot.commands.CommandOnline;
 import ru.redenergy.skypebot.commands.CommandScore;
 import ru.redenergy.skypebot.commands.CommandSpin;
@@ -20,6 +21,7 @@ public class Main {
 		bot.registerCommand(new CommandOnline());
 		bot.registerCommand(new CommandSpin());
 		bot.registerCommand(new CommandScore());
+		bot.registerCommand(new CommandMusic());
 		
 		try {
 			bot.start();

@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Logger;
 
@@ -17,7 +19,6 @@ import com.samczsun.skype4j.events.EventHandler;
 import com.samczsun.skype4j.events.Listener;
 import com.samczsun.skype4j.events.chat.message.MessageReceivedEvent;
 import com.samczsun.skype4j.exceptions.SkypeException;
-import com.samczsun.skype4j.formatting.Message;
 import com.samczsun.skype4j.user.User;
 
 import ru.redenergy.skypebot.commands.ICommand;
@@ -30,7 +31,8 @@ public class SkypeBot {
 	private Logger logger = Logger.getLogger("[SkypeBot]");
 	private HashMap<String, ICommand> commands = new HashMap<String, ICommand>();
 	private Gson gson = new Gson();
-	
+	private HashMap<String, Long> lastCommandTime = new HashMap<String, Long>();
+	private ExecutorService commandPool = Executors.newCachedThreadPool();
 	public SkypeBot(String username, String password){
 		this.username = username;
 		this.password = password;
@@ -83,13 +85,30 @@ public class SkypeBot {
 	
 	public void onCommand(User sender, String command, String[] args){
 		logger.info(String.format("Command %s recevied from %s with args %s", command, sender.getUsername(), Arrays.toString(args)));
-		try {
+		long lastCommandTime = this.lastCommandTime.get(sender.getUsername()) != null ? this.lastCommandTime.get(sender.getUsername()) : 0;
+		Runnable run = () -> {
 			ICommand com = this.commands.get(command);
 			if(com != null){
-				com.execute(sender, args);
+				if(lastCommandTime != 0 && (System.currentTimeMillis() / 1000L - lastCommandTime) < 3){
+					this.lastCommandTime.put(sender.getUsername(), System.currentTimeMillis() / 1000L);
+					return;
+				} else {
+					this.lastCommandTime.put(sender.getUsername(), System.currentTimeMillis() / 1000L);
+				}
+				try {
+					com.execute(sender, args);
+				} catch (Exception e) {e.printStackTrace();}
 			}
-		} catch (SkypeException e) {
-			e.printStackTrace();
-		}
+		};
+		this.commandPool.submit(run);
 	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		this.commandPool.shutdown();
+		super.finalize();
+	}
+	
+	
+
 }

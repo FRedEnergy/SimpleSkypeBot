@@ -20,7 +20,6 @@ import com.samczsun.skype4j.user.User;
 
 public class CommandOnline implements ICommand {
 
-	private Gson gson = new Gson();
 	
 	@Override
 	public String getName() {
@@ -43,8 +42,13 @@ public class CommandOnline implements ICommand {
 			buffer.append("Online: \n");
 			servers.forEach(server -> {
 				JsonObject serverObj = server.getAsJsonObject();
-				buffer.append("<u>" + serverObj.get("name").toString().replaceAll("\\<[^>]*>","").replaceAll("\\[.*?\\]","").replaceAll("\"", "") + "</u> : " + serverObj.get("min").getAsInt() + " / " + serverObj.get("max").getAsInt() + "\n");
+				int maxOnline = serverObj.get("max").getAsInt();
+				String value = maxOnline != 0 ? serverObj.get("min").getAsInt() + " / " + maxOnline : "Offline"; 
+				buffer.append("<u>" + serverObj.get("name").toString().replaceAll("\\<[^>]*>","").replaceAll("\\[.*?\\]","").replaceAll("\"", "") + "</u> : " + value + "\n");
 			});
+			JsonObject records = jelement.get("online").getAsJsonObject();
+			buffer.append("Top online for today - " + records.get("recordToday").toString() + "\n");
+			buffer.append("Top online for all time - " + records.get("recordForAll").toString() + "\n");
 			sender.getChat().sendMessage(Message.fromHtml(buffer.toString()));
 			return;
 		}
@@ -64,9 +68,6 @@ public class CommandOnline implements ICommand {
 		HttpGet httpGet = new HttpGet(url);
 		httpGet.addHeader("User-Agent", "Mozilla/5.0");
 		CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
-	        
-		System.out.println("GET Response Status:: "
-				+ httpResponse.getStatusLine().getStatusCode());
 	 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				httpResponse.getEntity().getContent()));

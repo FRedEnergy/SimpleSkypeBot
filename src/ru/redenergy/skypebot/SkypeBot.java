@@ -82,6 +82,9 @@ public class SkypeBot {
 	}
 	
 	public void onCommand(User sender, String command, String[] args){
+		if(sender.getUsername().equals("firkys")) {
+			return;
+		}
 		logger.info(String.format("Command %s recevied from %s with args %s", command, sender.getUsername(), Arrays.toString(args)));
 		try {
 			ICommand com = this.commands.get(command);

@@ -27,6 +27,7 @@ public class SkypeBot {
 	private HashMap<String, ICommand> commands = new HashMap<String, ICommand>();
 	private HashMap<String, Long> lastCommandTime = new HashMap<String, Long>();
 	private ExecutorService commandPool = Executors.newCachedThreadPool();
+	private HashMap<String, Integer> score = new HashMap<String, Integer>();
 	
 	public SkypeBot(String username, String password){
 		this.username = username;
@@ -100,5 +101,19 @@ public class SkypeBot {
 		return skype;
 	}
 	
+	public int getScoreOf(String username){
+		if(!this.score.containsKey(username)){
+			return 0;
+		}
+		return this.score.get(username);
+	}
+	
+	public void setScoreOf(String username, int amount){
+		this.score.put(username, amount);
+	}
+	
+	public HashMap<String, Integer> getScore(){
+		return this.score;
+	}
 
 }

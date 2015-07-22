@@ -7,6 +7,7 @@ import com.samczsun.skype4j.chat.GroupChat;
 import com.samczsun.skype4j.events.EventHandler;
 import com.samczsun.skype4j.events.Listener;
 import com.samczsun.skype4j.events.chat.message.MessageReceivedEvent;
+import com.samczsun.skype4j.exceptions.SkypeException;
 
 import ru.redenergy.skypebot.SkypeBot;
 
@@ -19,7 +20,7 @@ public class MessageListener implements Listener {
 	}
 	
 	@EventHandler
-	public void onMessage(MessageReceivedEvent event){
+	public void onMessage(MessageReceivedEvent event) throws SkypeException{
 		ChatMessage message = event.getMessage();
 		if(message.getSender().getUsername().equalsIgnoreCase(bot.getSkype().getUsername())) return;
 		if(message.getMessage().asPlaintext().startsWith("!")){

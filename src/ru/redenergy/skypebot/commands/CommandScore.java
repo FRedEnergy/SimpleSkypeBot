@@ -1,7 +1,9 @@
 package ru.redenergy.skypebot.commands;
 
-import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Map.Entry;
 
 import com.samczsun.skype4j.exceptions.SkypeException;
 import com.samczsun.skype4j.formatting.Message;
@@ -23,13 +25,15 @@ public class CommandScore implements ICommand {
 		} else if("top".equals(args[0])){
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Top score:\n");
-			TreeMap<String, Integer> sortedScore = new TreeMap<String, Integer>();
-			sortedScore.putAll(new HashMap<String, Integer>(Main.getBot().getScore()));
-			sortedScore.forEach((key, value) -> {
-				buffer.append(key + " - " + value + " points");
+			ArrayList<Entry<String, Integer>> scores = new ArrayList<Entry<String, Integer>>(Main.getBot().getScore().entrySet());
+			Collections.sort(scores, new Comparator<Entry<String, Integer>>() {
+				@Override
+				public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
+					return -o1.getValue().compareTo(o2.getValue());
+				}
 			});
+			scores.stream().forEachOrdered(entry -> {buffer.append(entry.getKey() + " - " + entry.getValue() + " points \n");});
 			sender.getChat().sendMessage(Message.fromHtml(buffer.toString()));
 		}
 	}
-
 }
